@@ -473,9 +473,12 @@
       markersRoot.appendChild(container);
     });
 
-    // Generate sidebar legend list
+    // Generate sidebar legend list (only for legends, not cities)
     const legendList = document.getElementById('legend-list');
     legends.forEach((legend, idx) => {
+      // Only add to sidebar if it's a legend marker
+      const isLegend = legend.markerImg === 'pin-icon.png';
+      if (!isLegend) return;
       const li = document.createElement('li');
       li.textContent = legend.name;
       li.dataset.marker = idx;
@@ -484,10 +487,11 @@
       legendList.appendChild(li);
     });
 
-    // Sidebar legend list logic
+    // Sidebar legend list logic (update to only use legend items)
     const markers = document.querySelectorAll('.tooltip-container');
     if (legendList) {
-      legendList.querySelectorAll('li').forEach((li, idx) => {
+      legendList.querySelectorAll('li').forEach((li) => {
+        const idx = Number(li.dataset.marker);
         li.addEventListener('click', () => {
           // Remove active from all
           markers.forEach(m => m.classList.remove('active'));
