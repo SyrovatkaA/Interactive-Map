@@ -202,19 +202,88 @@
       font-family: 'Cormorant Garamond', serif;
       opacity: 0.7;
     }
+
+    .legend-sidebar {
+      position: sticky;
+      top: 40px;
+      left: 0;
+      align-self: flex-start;
+      width: 300px;
+      min-height: 400px;
+      background: #fffbe9;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px #e0cfa033;
+      border: 2px solid #e0cfa0;
+      margin-right: 36px;
+      padding: 24px 18px 18px 18px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .legend-sidebar h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5em;
+      color: #a05c5c;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+    .legend-sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .legend-sidebar li {
+      cursor: pointer;
+      padding: 8px 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1em;
+      color: #7a3e3e;
+      transition: background 0.2s;
+      border-radius: 8px;
+      padding-left: 8px;
+    }
+    .legend-sidebar li:hover, .legend-sidebar li.active {
+      background: #fbeee0;
+    }
+    @media (max-width: 900px) {
+      .legend-sidebar {
+        position: static;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 24px;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px #e0cfa033;
+      }
+    }
+    .main-flex {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 0;
+    }
+    @media (max-width: 900px) {
+      .main-flex {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="page-wrapper">
-
     <header>
       <h1>Легенды Забайкалья</h1>
       <p>Интерактивная карта легенд края</p>
     </header>
-
-    <div class="map-container">
-      <img class="map-img" src="map.png" alt="Карта Забайкалья">
-      <div id="markers-root"></div>
+    <div class="main-flex">
+      <aside class="legend-sidebar">
+        <h2>Легенды на карте</h2>
+        <ul id="legend-list"></ul>
+      </aside>
+      <div class="map-container">
+        <img class="map-img" src="map.png" alt="Карта Забайкалья">
+        <div id="markers-root"></div>
+      </div>
     </div>
 
     <footer>
@@ -319,6 +388,43 @@
       `;
       markersRoot.appendChild(container);
     });
+
+    // Generate sidebar legend list
+    const legendList = document.getElementById('legend-list');
+    legends.forEach((legend, idx) => {
+      const li = document.createElement('li');
+      li.textContent = legend.name;
+      li.dataset.marker = idx;
+      li.addEventListener('mouseenter',()=>li.classList.add('active'));
+      li.addEventListener('mouseleave',()=>li.classList.remove('active'));
+      legendList.appendChild(li);
+    });
+
+    // Sidebar legend list logic
+    const markers = document.querySelectorAll('.tooltip-container');
+    if (legendList) {
+      legendList.querySelectorAll('li').forEach((li, idx) => {
+        li.addEventListener('click', () => {
+          // Remove active from all
+          markers.forEach(m => m.classList.remove('active'));
+          legendList.querySelectorAll('li').forEach(el => el.classList.remove('active'));
+          // Activate marker and list item
+          markers[idx].classList.add('active');
+          li.classList.add('active');
+          // Scroll to marker (if needed)
+          const mapRect = document.querySelector('.map-container').getBoundingClientRect();
+          const markerRect = markers[idx].getBoundingClientRect();
+          if (window.innerWidth > 900) {
+            window.scrollTo({
+              top: window.scrollY + markerRect.top - mapRect.top - 120,
+              behavior: 'smooth'
+            });
+          } else {
+            document.querySelector('.map-container').scrollIntoView({behavior:'smooth'});
+          }
+        });
+      });
+    }
 
     // Tooltip hover logic
     document.querySelectorAll('.tooltip-container').forEach(container => {
