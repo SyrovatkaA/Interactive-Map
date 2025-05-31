@@ -394,6 +394,18 @@
         route: '#',
         routeText: 'Проложить маршрут',
       },
+      {
+        name: 'Борзя',
+        markerImg: 'pin-borzya.png',
+        markerStyle: 'top: 79%; left: 58%;',
+        header: 'Борзя',
+        headerLink: '#',
+        img: 'krasnokamensk.webp',
+        imgAlt: 'Борзя',
+        text: '',
+        route: '#',
+        routeText: 'Проложить маршрут',
+      },
     ];
 
     // Generate map markers/tooltips
@@ -403,8 +415,13 @@
       container.className = 'tooltip-container';
       container.style = legend.markerStyle;
       container.setAttribute('data-marker', idx);
-      const markerType = legend.markerImg === 'pin-chita.png' ? 'chita' :
-        legend.markerImg === 'pin-krasnokamensk.png' ? 'city' : 'legend';
+      // Determine marker type
+      let markerType = 'legend';
+      if (legend.markerImg === 'pin-chita.png') {
+        markerType = 'chita';
+      } else if (legend.markerImg.startsWith('pin-') && legend.markerImg !== 'pin-icon.png') {
+        markerType = 'city';
+      }
       container.classList.add('marker-' + markerType);
       container.innerHTML = `
         <img class="marker-img" src="${legend.markerImg}" alt="Маркер">
