@@ -85,6 +85,35 @@
     a.back:hover {
       text-decoration: underline;
     }
+    .audio-block {
+      margin: 32px 0 0 0;
+      text-align: center;
+    }
+    .audio-block button {
+      background: linear-gradient(90deg, #a05c5c 60%, #e0cfa0 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1.1em;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #e0cfa055;
+      transition: background 0.2s, color 0.2s;
+      margin-bottom: 10px;
+    }
+    .audio-block button:hover {
+      background: linear-gradient(90deg, #e0cfa0 0%, #a05c5c 100%);
+      color: #a05c5c;
+    }
+    .audio-block audio {
+      display: block;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 400px;
+      margin-top: 12px;
+    }
   </style>
 </head>
 <body>
@@ -97,6 +126,12 @@
     <!-- Hero image -->
     <div class="hero">
       <img src="alhanay-hero.webp" alt="Гора Алханай">
+    </div>
+
+    <!-- Audio narration block -->
+    <div class="audio-block">
+      <button id="play-audio">▶️ Прослушать легенду</button>
+      <audio id="narration-audio" src="alkhanai-narration.mp3"></audio>
     </div>
 
     <!-- Основное описание -->
@@ -115,5 +150,34 @@
 
     <a href="index.html" class="back">← Назад к карте</a>
   </div>
+
+  <script>
+    // Audio narration logic
+    const playBtn = document.getElementById('play-audio');
+    const audio = document.getElementById('narration-audio');
+    let isPlaying = false;
+    playBtn.addEventListener('click', function() {
+      if (!isPlaying) {
+        audio.play();
+        playBtn.textContent = '⏸️ Пауза';
+      } else {
+        audio.pause();
+        playBtn.textContent = '▶️ Прослушать легенду';
+      }
+      isPlaying = !isPlaying;
+    });
+    audio.addEventListener('ended', function() {
+      playBtn.textContent = '▶️ Прослушать легенду';
+      isPlaying = false;
+    });
+    audio.addEventListener('pause', function() {
+      playBtn.textContent = '▶️ Прослушать легенду';
+      isPlaying = false;
+    });
+    audio.addEventListener('play', function() {
+      playBtn.textContent = '⏸️ Пауза';
+      isPlaying = true;
+    });
+  </script>
 </body>
 </html>
