@@ -262,6 +262,27 @@
         flex-direction: column;
       }
     }
+    .marker-legend .marker-img {
+      width: 110px;
+      height: 110px;
+    }
+    .marker-chita .marker-img {
+      width: 140px;
+      height: 140px;
+      z-index: 2;
+      filter: drop-shadow(0 4px 16px #a05c5c88) drop-shadow(0 0 8px #fff8);
+    }
+    .marker-city .marker-img {
+      width: 70px;
+      height: 70px;
+      z-index: 1;
+      filter: drop-shadow(0 2px 6px #a05c5c44);
+    }
+    @media (max-width: 900px) {
+      .marker-legend .marker-img { width: 70px; height: 70px; }
+      .marker-chita .marker-img { width: 90px; height: 90px; }
+      .marker-city .marker-img { width: 44px; height: 44px; }
+    }
   </style>
 </head>
 <body>
@@ -361,6 +382,18 @@
         route: '#',
         routeText: 'Проложить маршрут',
       },
+      {
+        name: 'Краснокаменск',
+        markerImg: 'pin-krasnokamensk.png',
+        markerStyle: 'top: 80%; left: 66%;',
+        header: 'Краснокаменск',
+        headerLink: '#',
+        img: 'krasnokamensk.webp',
+        imgAlt: 'Краснокаменск',
+        text: '',
+        route: '#',
+        routeText: 'Проложить маршрут',
+      },
     ];
 
     // Generate map markers/tooltips
@@ -370,6 +403,9 @@
       container.className = 'tooltip-container';
       container.style = legend.markerStyle;
       container.setAttribute('data-marker', idx);
+      const markerType = legend.markerImg === 'pin-chita.png' ? 'chita' :
+        legend.markerImg === 'pin-krasnokamensk.png' ? 'city' : 'legend';
+      container.classList.add('marker-' + markerType);
       container.innerHTML = `
         <img class="marker-img" src="${legend.markerImg}" alt="Маркер">
         <div class="tooltip">
