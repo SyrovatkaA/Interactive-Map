@@ -536,6 +536,91 @@
       tooltip.addEventListener('mouseenter', show);
       tooltip.addEventListener('mouseleave', hide);
     });
+
+    // Tooltip hover logic with smart positioning
+    document.querySelectorAll('.tooltip-container').forEach(container => {
+      const marker = container.querySelector('.marker-img');
+      const tooltip = container.querySelector('.tooltip');
+      let inside = false;
+      let hideTimeout;
+
+      function show() {
+        clearTimeout(hideTimeout);
+        container.classList.add('active');
+        inside = true;
+        // Smart positioning: keep tooltip inside map
+        setTimeout(() => {
+          if (!tooltip) return;
+          tooltip.style.left = '';
+          tooltip.style.top = '';
+          tooltip.style.transform = '';
+          tooltip.style.right = '';
+          tooltip.style.bottom = '';
+          tooltip.style.maxWidth = '';
+          tooltip.style.width = '';
+
+          const tooltipRect = tooltip.getBoundingClientRect();
+          const markerRect = marker.getBoundingClientRect();
+          const mapRect = document.querySelector('.map-container').getBoundingClientRect();
+
+          // Default: right of marker
+          tooltip.style.left = '100%';
+          tooltip.style.top = '0';
+          tooltip.style.transform = 'translate(-30%, -10%)';
+          tooltip.style.right = '';
+          tooltip.style.bottom = '';
+
+          // Recalculate after style applied
+          const recalc = () => tooltip.getBoundingClientRect();
+          let tRect = recalc();
+
+          // Horizontal overflow right
+          let overflowRight = (tRect.right > mapRect.right) ? tRect.right - mapRect.right : 0;
+          // Horizontal overflow left
+          let overflowLeft = (tRect.left < mapRect.left) ? mapRect.left - tRect.left : 0;
+          // Vertical overflow bottom
+          let overflowBottom = (tRect.bottom > mapRect.bottom) ? tRect.bottom - mapRect.bottom : 0;
+          // Vertical overflow top
+          let overflowTop = (tRect.top < mapRect.top) ? mapRect.top - tRect.top : 0;
+
+          // If overflow right, shift left by that amount
+          if (overflowRight > 0) {
+            tooltip.style.left = `calc(100% - ${overflowRight}px)`;
+          }
+          // If overflow left, shift right by that amount
+          if (overflowLeft > 0) {
+            tooltip.style.left = `calc(100% + ${overflowLeft}px)`;
+          }
+          // If still overflows left, fallback to left side of marker
+          tRect = recalc();
+          if (tRect.left < mapRect.left) {
+            tooltip.style.left = 'auto';
+            tooltip.style.right = '100%';
+            tooltip.style.transform = 'translate(30%, -10%)';
+          }
+          // If overflow bottom, move up
+          tRect = recalc();
+          if (overflowBottom > 0) {
+            tooltip.style.top = `calc(0% - ${overflowBottom}px)`;
+          }
+          // If overflow top, move down
+          tRect = recalc();
+          if (overflowTop > 0) {
+            tooltip.style.top = `calc(0% + ${overflowTop}px)`;
+          }
+        }, 0);
+      }
+      function hide() {
+        inside = false;
+        hideTimeout = setTimeout(() => {
+          if (!inside) container.classList.remove('active');
+        }, 150);
+      }
+      marker.addEventListener('mouseenter', show);
+      marker.addEventListener('mouseleave', hide);
+      tooltip.addEventListener('mouseenter', show);
+      tooltip.addEventListener('mouseleave', hide);
+    });
   </script>
   
 </body>
