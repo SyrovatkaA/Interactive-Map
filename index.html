@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Интерактивная карта легенд Забайкалья</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Шрифты -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Ponomar&display=swap" rel="stylesheet">
+  
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(120deg, #fdf6e3 0%, #fbeee0 100%);
+      font-family: "Ponomar", system-ui;
+      min-height: 100vh;
+    }
+    .page-wrapper {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 56px 0 36px 0;
+      background: #fff;
+      border-bottom: 2px solid #e0cfa0;
+      box-shadow: 0 6px 32px 0 #e0cfa033;
+      border-radius: 0 0 40px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 60px;
+      margin: 0;
+      color: #7a3e3e;
+      letter-spacing: 2px;
+      font-weight: 700;
+      text-shadow: 0 2px 8px #fff8, 0 1px 0 #e0cfa0;
+      background: linear-gradient(90deg, #a05c5c 20%, #e0cfa0 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      font-size: 22px;
+      color: #a05c5c;
+      margin-top: 18px;
+      letter-spacing: 1px;
+      font-family: 'Cormorant Garamond', serif;
+      text-shadow: 0 1px 0 #fff8;
+      font-weight: 500;
+    }
+    header::after {
+      content: "";
+      display: block;
+      margin: 32px auto 0 auto;
+      width: 80px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #e0cfa0 0%, #a05c5c 50%, #e0cfa0 100%);
+      opacity: 0.8;
+      box-shadow: 0 2px 12px #e0cfa0aa;
+    }
+
+    .map-container {
+      position: relative;
+      width: 100%;
+      border: 2px solid #a05c5c;
+      box-shadow: 0 0 24px 0 #e0cfa055;
+      border-radius: 24px;
+      background: #fffbe9;
+      overflow: hidden;
+    }
+    .map-container img.map-img {
+      width: 100%;
+      display: block;
+      border-radius: 24px;
+    }
+
+    .tooltip-container {
+      position: absolute;
+      z-index: 0;
+      transition: z-index 0s;
+    }
+    .tooltip-container.active {
+      z-index: 9999;
+    }
+    .tooltip-container .marker-img {
+      width: 110px;
+      height: 110px;
+      transform: translate(-50%, -100%);
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(.4,2,.6,1), filter 0.2s;
+      filter: drop-shadow(0 2px 8px #e0cfa0cc);
+    }
+    .tooltip-container .marker-img:hover {
+      transform: scale(1.13) translate(-50%, -100%);
+      filter: drop-shadow(0 4px 16px #a05c5c88);
+    }
+
+    .tooltip-container .tooltip {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      transform: translate(-30%, -10%);
+      background: rgba(255,255,255,0.98);
+      padding: 18px 22px 16px 22px;
+      border: 1.5px solid #e0cfa0;
+      font-size: 18px;
+      line-height: 1.5;
+      width: 320px;
+      max-width: 92vw;
+      min-width: 180px;
+      display: none;
+      pointer-events: none;
+      z-index: 10000;
+      box-shadow: 0 0 24px 0 #e0cfa0cc;
+      word-break: break-word;
+      border-radius: 16px;
+      color: #7a3e3e;
+      font-family: 'Cormorant Garamond', serif;
+      transition: box-shadow 0.2s;
+    }
+    .tooltip-container.active .tooltip {
+      display: block;
+      pointer-events: auto;
+      box-shadow: 0 0 32px 0 #a05c5c44, 0 0 24px 0 #e0cfa0cc;
+    }
+    .tooltip-container .tooltip b a {
+      color: #a05c5c;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .tooltip-container .tooltip b a:hover {
+      color: #e0cfa0;
+      text-decoration: underline;
+    }
+    .tooltip-container .tooltip-header {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25em;
+      font-weight: 700;
+      color: #a05c5c;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-align: left;
+      line-height: 1.2;
+      text-shadow: 0 1px 0 #fff8;
+    }
+    .tooltip-container .tooltip-img {
+      display: block;
+      width: 100%;
+      max-width: 220px;
+      margin: 0 auto 12px auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px #e0cfa055;
+      object-fit: cover;
+      background: #f8e1c2;
+    }
+    .tooltip-container .tooltip-text {
+      display: block;
+      font-size: 1em;
+      font-family: 'Cormorant Garamond', serif;
+      color: #7a3e3e;
+      margin-bottom: 0.5em;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: left;
+    }
+    .tooltip-container .tooltip-text .tooltip-link {
+      color: #fff;
+      background: linear-gradient(90deg, #a05c5c 60%, #e0cfa0 100%);
+      border-radius: 6px;
+      padding: 6px 16px;
+      text-decoration: none;
+      font-size: 16px;
+      margin-top: 12px;
+      display: inline-block;
+      font-family: inherit;
+      font-weight: 600;
+      box-shadow: 0 2px 8px #e0cfa055;
+      transition: background 0.2s, color 0.2s;
+    }
+    .tooltip-container .tooltip-text .tooltip-link:hover {
+      background: linear-gradient(90deg, #e0cfa0 0%, #a05c5c 100%);
+      color: #a05c5c;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 15px;
+      color: #a05c5c;
+      letter-spacing: 1px;
+      font-family: 'Cormorant Garamond', serif;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <header>
+      <h1>Легенды Забайкалья</h1>
+      <p>Интерактивная карта легенд края</p>
+    </header>
+
+    <div class="map-container">
+      <img class="map-img" src="map.png" alt="Карта Забайкалья">
+      <div id="markers-root"></div>
+    </div>
+
+    <footer>
+      &copy; 2025 Легенды Забайкалья | Дарина Сыроватка
+    </footer>
+
+  </div>
+  <script>
+    // Dynamic data for all locations
+    const legends = [
+      {
+        name: 'Алханай',
+        markerImg: 'pin-icon.png',
+        markerStyle: 'top: 72%; left: 45%;',
+        header: 'Легенда об Алханае',
+        headerLink: 'alkhanai.html',
+        img: 'alhanay-hero.webp',
+        imgAlt: 'Гора Алханай',
+        text: `Согласно бурятской легенде, жила когда-то княжна Бальчжин-хатун. Она вышла замуж за монгольского феодала и вместе с ним уехала в Монголию. Но ненависть врагов не давала им жить спокойно, и пара решила вернуться на родину княжны. По дороге, около горного массива их догнали враги и убили княжну. Предсмертный крик женщины: «Алханы!» («убивают»), — стал названием горы. А её имя — Бальчжин — сохранилось в названии Бальзинского озера.`,
+        route: 'https://yandex.ru/maps/?rtext=~50.828942,113.400531',
+        routeText: 'Проложить маршрут',
+      },
+      {
+        name: 'Город Чита',
+        markerImg: 'pin-chita.png',
+        markerStyle: 'top: 60%; left: 45%;',
+        header: 'Город Чита',
+        headerLink: '#',
+        img: 'chita.jpg',
+        imgAlt: 'Город Чита',
+        text: 'Современный административный центр Забайкальского края, основан в 1653 году как военная слобода на реке Чита.',
+        route: '#',
+        routeText: 'Проложить маршрут',
+      },
+      {
+        name: 'Скала любви',
+        markerImg: 'pin-icon.png',
+        markerStyle: 'top: 55%; left: 55%;',
+        header: 'Скала любви',
+        headerLink: '#',
+        img: 'skala-lyubvi.jpg',
+        imgAlt: 'Скала любви',
+        text: 'Давным-давно были в этих местах два враждующих клана эвенков. Юноша и девушка из разных кланов полюбили друг друга, но им не давали быть вместе. Они прыгнули со скалы. После этого кланы объединились, а скалу стали называть Скалой Любви.',
+        route: 'https://yandex.ru/maps/?rtext=~52.634398,115.392060',
+        routeText: 'Проложить маршрут',
+      },
+      {
+        name: 'Реки Верея и Кручина',
+        markerImg: 'pin-icon.png',
+        markerStyle: 'top: 61%; left: 51%;',
+        header: 'Реки Верея и Кручина',
+        headerLink: '#',
+        img: 'vereya-kruchina.jpg',
+        imgAlt: 'Реки Верея и Кручина',
+        text: 'По одной из версий, эти два потока были названы в честь древних богов плодородия Вереи и Кручины.',
+        route: '#',
+        routeText: 'Проложить маршрут',
+      },
+      {
+        name: 'Агинская степь',
+        markerImg: 'pin-icon.png',
+        markerStyle: 'top: 66%; left: 55%;',
+        header: 'Агинская степь',
+        headerLink: '#',
+        img: 'aginskaya-step.jpg',
+        imgAlt: 'Агинская степь',
+        text: 'По местному преданию, именно здесь родился Темуджин — будущий Чингисхан. После смерти его тело было возвращено сюда и тайно похоронено, изменив русло реки Онон.',
+        route: '#',
+        routeText: 'Проложить маршрут',
+      },
+      {
+        name: 'Чаша Чингисхана',
+        markerImg: 'pin-icon.png',
+        markerStyle: 'top: 68%; left: 58%;',
+        header: 'Чаша Чингисхана',
+        headerLink: '#',
+        img: 'chasha-chingishana.jpg',
+        imgAlt: 'Чаша Чингисхана',
+        text: 'Согласно легенде, во время войны с меркитами Темуджин был ранен отравленной стрелой. Он исцелился водой, собравшейся в каменной чаше на горе. Другая версия — чаша — это окаменевший котёл богатыря Бабажи Батора.',
+        route: '#',
+        routeText: 'Проложить маршрут',
+      },
+    ];
+
+    // Generate map markers/tooltips
+    const markersRoot = document.getElementById('markers-root');
+    legends.forEach((legend, idx) => {
+      const container = document.createElement('div');
+      container.className = 'tooltip-container';
+      container.style = legend.markerStyle;
+      container.setAttribute('data-marker', idx);
+      container.innerHTML = `
+        <img class="marker-img" src="${legend.markerImg}" alt="Маркер">
+        <div class="tooltip">
+          <span class="tooltip-header"><a href="${legend.headerLink}" style="color:inherit;text-decoration:none;">${legend.header}</a></span><br>
+          <img class="tooltip-img" src="${legend.img}" alt="${legend.imgAlt}">
+          <span class="tooltip-text">
+            ${legend.text}<br>
+            <a href="${legend.route}" class="tooltip-link" target="_blank">${legend.routeText}</a>
+          </span>
+        </div>
+      `;
+      markersRoot.appendChild(container);
+    });
+
+    // Tooltip hover logic
+    document.querySelectorAll('.tooltip-container').forEach(container => {
+      const marker = container.querySelector('.marker-img');
+      const tooltip = container.querySelector('.tooltip');
+      let inside = false;
+      let hideTimeout;
+      function show() {
+        clearTimeout(hideTimeout);
+        container.classList.add('active');
+        inside = true;
+      }
+      function hide() {
+        inside = false;
+        hideTimeout = setTimeout(() => {
+          if (!inside) container.classList.remove('active');
+        }, 150);
+      }
+      marker.addEventListener('mouseenter', show);
+      marker.addEventListener('mouseleave', hide);
+      tooltip.addEventListener('mouseenter', show);
+      tooltip.addEventListener('mouseleave', hide);
+    });
+  </script>
+  
+</body>
+</html>

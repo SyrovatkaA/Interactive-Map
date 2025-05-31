@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Интерактивная карта легенд Забайкалья</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Шрифты -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Ponomar&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fdf6e3;
+      font-family: "Ponomar", system-ui;
+    }
+
+    .page-wrapper {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 18px;
+      color: #555;
+      margin-top: 8px;
+    }
+
+    .map-container {
+      position: relative;
+      width: 100%;
+      border: 2px solid #333;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .map-container img.map-img {
+      width: 100%;
+      display: block;
+    }
+
+    .marker-img {
+      position: absolute;
+      width: 128px;
+      height: 128px;
+      transform: translate(-50%, -100%);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .marker-img:hover {
+      transform: scale(1.1) translate(-50%, -100%);
+    }
+
+    .tooltip {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 8px 12px;
+      border: 1px solid #666;
+      font-size: 18px;
+      display: none;
+      z-index: 9999;
+      max-width: 400px;
+      line-height: 1.4;
+    }
+
+    .marker-img:hover + .tooltip {
+      display: block;
+      box-shadow: 0 0 20px gold;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <header>
+      <h1>Легенды Забайкалья</h1>
+      <p>Интерактивная карта легенд края</p>
+    </header>
+
+    <div class="map-container">
+      <img class="map-img" src="map.png" alt="Карта">
+
+      <!-- Алханай -->
+      <img class="marker-img" src="pin-icon.png" style="top: 72%; left: 45%;" alt="Маркер">
+      <div class="tooltip" style="top: 74%; left: 47%;">
+        <b>Легенда об Алханае.</b> Согласно бурятской легенде, жила когда-то княжна Бальчжин-хатун. Она вышла замуж за монгольского феодала и вместе с ним уехала в Монголию. Но ненависть врагов не давала им жить спокойно, и пара решила вернуться на родину княжны. По дороге, около горного массива их догнали враги и убили княжну. Предсмертный крик женщины: «Алханы!» («убивают»), — стал названием горы. А ее имя — Бальчжин — сохранилось в названии Бальзинского озера.
+      </div>
+
+      <!-- Чита -->
+      <img class="marker-img" src="pin-chita.png" style="top: 60%; left: 45%;" alt="Маркер">
+      <div class="tooltip" style="top: 62%; left: 47%;">Чита</div>
+
+      <!-- Скала любви -->
+      <img class="marker-img" src="pin-icon.png" style="top: 55%; left: 55%;" alt="Маркер">
+      <div class="tooltip" style="top: 57%; left: 57%;">
+        <b>Скала любви.</b> Давным-давно были в этих местах два враждующих клана эвенков. Юноша и девушка из разных кланов полюбили друг друга, но им не давали быть вместе. Они прыгнули со скалы. После этого кланы объединились, а скалу стали называть Скалой Любви.
+      </div>
+
+      <!-- Верея и Кручина -->
+      <img class="marker-img" src="pin-icon.png" style="top: 61%; left: 51%;" alt="Маркер">
+      <div class="tooltip" style="top: 63%; left: 53%;"><b>Реки Верея и Кручина.</b> Когда-то здесь был дремучий лес и маленькое поселение, где жила мать с дочерью и некой волшебной силой. Люди избегали их, и мужчин в доме не бывало. Перед смертью мать решила выдать дочь за Илью из соседней деревни. Но перед свадьбой его забрали в солдаты, а позже сообщили о его гибели. Девушка, не веря в смерть любимого, выбежала из дома. Мать бросилась за ней и призвала волшебную силу. Каменные воины попытались остановить девушку, но она вырвалась, крича: «Верю я!». Тогда воины превратились в траву, оплели её ноги, и девушка упала, став рекой. Мать тоже обратилась в реку. Так появились Верея и Кручина — две сливаясь, они шепчут о женской боли.</div>
+
+      <!-- Агинская степь -->
+      <img class="marker-img" src="pin-icon.png" style="top: 66%; left: 55%;" alt="Маркер">
+      <div class="tooltip" style="top: 67%; left: 57%;">
+        <b>Агинская степь.</b> По местному преданию, именно здесь родился Темуджин — будущий Чингисхан. После смерти его тело было возвращено сюда и тайно похоронено, изменив русло реки Онон.
+      </div>
+
+      <!-- Чаша Чингисхана -->
+      <img class="marker-img" src="pin-icon.png" style="top: 68%; left: 58%;" alt="Маркер">
+      <div class="tooltip" style="top: 67%; left: 57%;">
+        <b>Чаша Чингисхана.</b> Согласно легенде, во время войны с меркитами Темуджин был ранен отравленной стрелой. Он исцелился водой, собравшейся в каменной чаше на горе. Другая версия — чаша — это окаменевший котёл богатыря Бабажи Батора.
+      </div>
+    </div>
+
+    <footer>
+      &copy; 2025 Легенды Забайкалья | Дарина Сыроватка
+    </footer>
+
+  </div>
+</body>
+</html>
