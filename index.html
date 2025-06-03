@@ -485,15 +485,18 @@
       markersRoot.appendChild(container);
     });
 
-    // Generate sidebar legend list (only for legends, not cities)
+    // Generate sidebar legend list (only for legends, not cities), sorted alphabetically
     const legendList = document.getElementById('legend-list');
-    legends.forEach((legend, idx) => {
-      // Only add to sidebar if it's a legend marker
-      const isLegend = legend.markerImg === 'pin-icon.png';
-      if (!isLegend) return;
+    // Collect legend items with their index
+    const legendSidebarItems = legends
+      .map((legend, idx) => ({ legend, idx }))
+      .filter(item => item.legend.markerImg === 'pin-icon.png');
+    // Sort alphabetically by name
+    legendSidebarItems.sort((a, b) => a.legend.name.localeCompare(b.legend.name, 'ru'));
+    legendSidebarItems.forEach(item => {
       const li = document.createElement('li');
-      li.textContent = legend.name;
-      li.dataset.marker = idx;
+      li.textContent = item.legend.name;
+      li.dataset.marker = item.idx;
       legendList.addEventListener('mouseenter', (event) => {
         if (event.target.tagName === 'LI') {
           event.target.classList.add('active');
