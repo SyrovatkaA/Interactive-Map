@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Интерактивная карта легенд Забайкалья</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon", href="favicon.ico">
+  <link rel="icon" href="favicon.ico">
 
   <!-- Шрифты -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -304,13 +304,24 @@
     </div>
 
     <footer>
-      &copy; 2025 Живые легенды Забайкалья | Дарина Сыроватка
+      &copy; <span id="current-year"></span> Живые легенды Забайкалья | Дарина Сыроватка
     </footer>
 
   </div>
   <script>
     // Dynamic data for all locations
     const legends = [
+      // Each legend object contains the following properties:
+      // - name: The name of the legend or location.
+      // - markerImg: The image file for the map marker.
+      // - markerStyle: CSS styles for positioning the marker on the map.
+      // - header: The title of the legend or location.
+      // - headerLink: A link to more information about the legend.
+      // - img: The image file representing the legend or location.
+      // - imgAlt: Alternative text for the image.
+      // - text: A description or story related to the legend.
+      // - route: A URL for navigation or route planning.
+      // - routeText: Text for the route link.
       {
         name: 'Алханай',
         markerImg: 'pin-icon.png',
@@ -391,7 +402,7 @@
         headerLink: '#',
         img: 'krasnokamensk.webp',
         imgAlt: 'Краснокаменск',
-        text: '',
+        text: 'Краснокаменск — Урановая столица России. Город был основан в 1975 году как закрытый город для работников уранодобывающей промышленности. Здесь находится крупнейшее в России урановое месторождение.',
         route: '#',
         routeText: 'Проложить маршрут',
       },
@@ -403,7 +414,7 @@
         headerLink: '#',
         img: 'borzya.jpg',
         imgAlt: 'Борзя',
-        text: '',
+        text: 'Рядом с Борзей находится Даурский заповедник, занесённый в список биосферных резерватов ЮНЕСКО. Здесь обитают редкие виды животных, такие как даурский журавль и амурский тигр',
         route: '#',
         routeText: 'Проложить маршрут',
       },
@@ -415,7 +426,7 @@
         headerLink: '#',
         img: 'nerchinsk.jpg',
         imgAlt: 'Нерчинск',
-        text: '',
+        text: 'Нерчинск — один из старейших городов Забайкалья, основанный в 1654 году. Он был важным административным и торговым центром, а также местом заключения Нерчинского договора между Россией и Китаем в 1689 году. Был местом ссылки декабристов и других политических заключённых',
         route: '#',
         routeText: 'Проложить маршрут',
       },
@@ -427,7 +438,7 @@
         headerLink: '#',
         img: 'mogocha.jpg',
         imgAlt: 'Могоча',
-        text: '',
+        text: 'Могоча — это не только административный центр Могочинского района, но и важный транспортный узел. Город расположен на пересечении железнодорожных и автомобильных дорог, что делает его ключевым пунктом для грузоперевозок в Забайкальском крае.',
         route: '#',
         routeText: 'Проложить маршрут',
       },
@@ -483,8 +494,16 @@
       const li = document.createElement('li');
       li.textContent = legend.name;
       li.dataset.marker = idx;
-      li.addEventListener('mouseenter',()=>li.classList.add('active'));
-      li.addEventListener('mouseleave',()=>li.classList.remove('active'));
+      legendList.addEventListener('mouseenter', (event) => {
+        if (event.target.tagName === 'LI') {
+          event.target.classList.add('active');
+        }
+      });
+      legendList.addEventListener('mouseleave', (event) => {
+        if (event.target.tagName === 'LI') {
+          event.target.classList.remove('active');
+        }
+      });
       legendList.appendChild(li);
     });
 
@@ -622,6 +641,8 @@
       tooltip.addEventListener('mouseenter', show);
       tooltip.addEventListener('mouseleave', hide);
     });
+    // Update footer year dynamically
+    document.getElementById('current-year').textContent = new Date().getFullYear();
   </script>
   
 </body>
